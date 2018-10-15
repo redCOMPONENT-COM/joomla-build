@@ -1,5 +1,5 @@
-const gulpUtils = require("./gulp-utils.js");
-const utils = require("./utils.js");
+const gulpUtils = require("./gulp/gulp-utils.js");
+const utils = require("./gulp/utils.js");
 const gulp = require("gulp");
 const yargs = require("yargs");
 
@@ -19,7 +19,7 @@ const mainTasks = gulpUtils.getBaseTasks();
 // Configuration read task.  Stores it in gulpUtils.config variable
 gulp.task("config", function (done) {
     "use strict";
-    gulpUtils.setConfigurationFromData(utils.readJSON("../../gulp-config.json"));
+    gulpUtils.setConfigurationFromData(utils.readJSON("../gulp-config.json"));
     gulpUtils.setConfigurationFromData(yargs.argv);
     done();
 });
