@@ -1,0 +1,7 @@
+{
+  "wwwDir"        : "/var/www",
+  "releaseDir"    : "./releases/",
+  "watchInterval" : "1000",
+  "defaultTasks"  : [ "release" ],
+  "useVersions"   : true
+}

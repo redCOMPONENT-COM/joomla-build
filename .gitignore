@@ -1,0 +1,43 @@
+# OSX
+.DS_Store
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+Desktop.ini
+
+# PHPStorm
+.idea/
+
+# Sublime Text
+*.sublime*
+sftp-config.json
+
+# Eclipse
+.buildpath
+.project
+.settings
+
+# Netbeans (custom)
+.netbeans/*
+
+# Temp files
+*.tmp
+*.bak
+*.swp
+*~.nib
+*~
+*.bak.php
+
+# Build config
+node_modules
+vendor
+*/node_modules
+*/vendor
+
+# Never ignore
+!.gitignore
+!index.html
+!index.php
