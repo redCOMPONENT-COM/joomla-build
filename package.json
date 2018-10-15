@@ -1,6 +1,6 @@
 {
   "name": "joomla-build",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Gulp-based build/release system for Joomla! extensions",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -23,7 +23,6 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "del": "^3.0.0",
-    "file-exists": "^5.0.1",
     "gulp": "^4.0.0",
     "gulp-composer": "^0.4.5",
     "gulp-newer": "^1.4.0",

@@ -2,16 +2,21 @@ const gulpUtils = require("./gulp/gulp-utils.js");
 const utils = require("./gulp/utils.js");
 const gulp = require("gulp");
 const yargs = require("yargs");
+const fs = require("fs");
 
-const extensionTypes = [
+const allExtensionTypes = [
     "components",
     "libraries",
     "plugins"
 ];
+const extensionTypes = [];
 
-extensionTypes.forEach(function (type) {
+allExtensionTypes.forEach(function (type) {
     "use strict";
-    require("./gulp/" + type + ".js");
+    if (fs.existsSync("./extensions/" + type)) {
+        require("./gulp/" + type + ".js");
+        extensionTypes.push(type);
+    }
 });
 
 const mainTasks = gulpUtils.getBaseTasks();

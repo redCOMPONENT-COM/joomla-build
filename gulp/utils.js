@@ -1,6 +1,5 @@
 const fs = require("fs");
 const xml2js = require("xml2js");
-const fileExists = require("file-exists");
 const xmlParser = new xml2js.Parser();
 
 /**
@@ -12,7 +11,7 @@ const xmlParser = new xml2js.Parser();
  */
 function readJSON(jsonFile) {
     "use strict";
-    if (!fileExists.sync(jsonFile)) {
+    if (!fs.existsSync(jsonFile)) {
         return "{}";
     }
     return JSON.parse(fs.readFileSync(jsonFile).toString());
