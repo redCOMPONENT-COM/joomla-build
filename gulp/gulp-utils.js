@@ -4,8 +4,8 @@ const zip = require("gulp-zip");
 const prune = require("gulp-prune");
 const newer = require("gulp-newer");
 const del = require("del");
-const fileExists = require("file-exists");
 const composer = require("gulp-composer");
+const fs = require("fs");
 
 /**
  * Main configuration
@@ -186,7 +186,7 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
     const releaseTasks = ["release-do:" + baseTask];
     const copyTasks = ["copy-do:" + baseTask];
     const watchTasks = ["watch-main:" + baseTask];
-    const composerExists = fileExists.sync(dir + "/composer.json");
+    const composerExists = fs.existsSync(dir + "/composer.json");
     const sources = [dir + "/**"].concat(extraSources);
 
     if (composerExists) {
