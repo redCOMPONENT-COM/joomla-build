@@ -11,7 +11,7 @@ const extensionTypes = [
 
 extensionTypes.forEach(function (type) {
     "use strict";
-    require("./" + type + ".js");
+    require("./gulp/" + type + ".js");
 });
 
 const mainTasks = gulpUtils.getBaseTasks();
