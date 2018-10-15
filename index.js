@@ -19,7 +19,7 @@ const mainTasks = gulpUtils.getBaseTasks();
 // Configuration read task.  Stores it in gulpUtils.config variable
 gulp.task("config", function (done) {
     "use strict";
-    gulpUtils.setConfigurationFromData(utils.readJSON("../gulp-config.json"));
+    gulpUtils.setConfigurationFromData(utils.readJSON("gulp-config.json"));
     gulpUtils.setConfigurationFromData(yargs.argv);
     done();
 });
