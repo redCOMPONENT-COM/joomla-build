@@ -1,8 +1,7 @@
 const utils = require("./utils.js");
 const gulp = require("gulp");
 const zip = require("gulp-zip");
-const prune = require("gulp-prune");
-const newer = require("gulp-newer");
+const vinylPaths = require("vinyl-paths");
 const del = require("del");
 const composer = require("gulp-composer");
 const fs = require("fs");
@@ -226,37 +225,25 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
     if (executeWebTasks) {
         // Clean task
         gulp.task("clean:" + baseTask, function () {
-            return del(config.wwwDir + "/" + destinationWebDir, {force: true});
+            return gulp.src(config.wwwDir + "/" + destinationWebDir, {"allowEmpty": true})
+                .pipe(vinylPaths(function (paths) {
+                    del.sync(paths, {"force": true});
+                    return Promise.resolve();
+                }));
         });
 
         // Copy tasks
-        const copyFunction = function () {
+        gulp.task("copy-do:" + baseTask, gulp.series("clean:" + baseTask, function () {
             return gulp.src(sources)
-                .pipe(prune({
-                    dest: config.wwwDir + "/" + destinationWebDir
-                }))
-                .pipe(newer({
-                    dest: config.wwwDir + "/" + destinationWebDir
-                }))
                 .pipe(gulp.dest(config.wwwDir + "/" + destinationWebDir));
-        };
-        const copyFunctionName =
-                composerExists
-            ? "copy-do"
-            : "copy";
-
-        if (composerExists) {
-            gulp.task("copy-do:" + baseTask, copyFunction);
-            gulp.task("copy:" + baseTask, gulp.parallel(copyTasks));
-        } else {
-            gulp.task("copy:" + baseTask, copyFunction);
-        }
+        }));
+        gulp.task("copy:" + baseTask, gulp.series(copyTasks));
 
         // Watch tasks
         const watchFunction = function () {
             return gulp.watch(sources,
                     {interval: config.watchInterval},
-                    gulp.series(copyFunctionName + ":" + baseTask));
+                    gulp.series("copy-do:" + baseTask));
         };
 
         if (composerExists) {
