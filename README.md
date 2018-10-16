@@ -1,5 +1,8 @@
 # Gulp-based build/release system for Joomla! extensions
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/redCOMPONENT-COM/joomla-build/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/redCOMPONENT-COM/joomla-build/?branch=master)
+[![Build Status](https://scrutinizer-ci.com/g/redCOMPONENT-COM/joomla-build/badges/build.png?b=master)](https://scrutinizer-ci.com/g/redCOMPONENT-COM/joomla-build/build-status/master)
+
 ## Intro
 
 This is an npm plugin to deploy your Joomla! extension directly to a website or to create zip packages.
