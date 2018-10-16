@@ -38,8 +38,8 @@ componentDirs.forEach(function (component) {
         const componentSiteDir = mainDir + "/" + component + "/" + componentSite.directory;
         const componentSiteBaseTask = mainBaseTask + ":" + component + ":" + componentSite.directory;
         const componentSiteWebDir = (componentSite.directory === "admin")
-            ? "administrator/components/" + component
-            : "components/" + component;
+            ? "administrator/components/" + prefix + component
+            : "components/" + prefix + component;
         gulpUtils.generateContentTasks(
             componentSiteDir,
             (
