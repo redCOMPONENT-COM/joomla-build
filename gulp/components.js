@@ -14,7 +14,7 @@ componentDirs.forEach(function (component) {
     const componentExtensionName =
             component.substr(0, 4) === prefix
         ? component.substr(4)
-        : component;
+        : prefix + component;
 
     // Release tasks
     gulpUtils.generateContentTasks(
