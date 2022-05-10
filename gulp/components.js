@@ -24,7 +24,7 @@ componentDirs.forEach(function (component) {
         componentBaseTask,
         "",
         mainBaseTask,
-        component
+        prefix + component
     );
 
     const componentStandaloneFiles = [];

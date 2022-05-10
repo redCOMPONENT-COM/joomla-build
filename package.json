@@ -1,6 +1,6 @@
 {
   "name": "joomla-build",
-  "version": "0.1.8",
+  "version": "0.1.10",
   "description": "Gulp-based build/release system for Joomla! extensions",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
