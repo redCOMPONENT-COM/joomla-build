@@ -4,8 +4,7 @@ const yargs = require("yargs");
 const fs = require("fs");
 const { series, parallel } = require("gulp");
 
-// const allExtensionTypes = ["components", "libraries", "plugins"];
-const allExtensionTypes = ["modules"];
+const allExtensionTypes = ["components", "libraries", "modules", "plugins"];
 const extensionTypes = [];
 
 allExtensionTypes.forEach(function (type) {

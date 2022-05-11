@@ -20,8 +20,9 @@ This is a gulp-based system that detects the structure (given a base) and automa
 
 Currently, the build system supports a multi-structure organization in the repository, containing:
 
--   Components (with backend and frontend)
+-   Components (with backoffice and frontoffice)
 -   Libraries
+-   Modules (frontoffice and backoffice)
 -   Plugins
 
 Also, extensions can contain a `composer.json` file that will be executed to get a `vendor` file when the extension is released either to the site or to a package
