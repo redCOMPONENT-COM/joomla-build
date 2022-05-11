@@ -3,7 +3,6 @@ const utils = require("./gulp/utils.js");
 const yargs = require("yargs");
 const fs = require("fs");
 const { series, parallel } = require("gulp");
-const gulp = require("gulp");
 
 // const allExtensionTypes = ["components", "libraries", "plugins"];
 const allExtensionTypes = ["modules"];
