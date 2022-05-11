@@ -1,18 +1,14 @@
 const gulpUtils = require("./gulp/gulp-utils.js");
 const utils = require("./gulp/utils.js");
-const gulp = require("gulp");
 const yargs = require("yargs");
 const fs = require("fs");
+const { series, parallel } = require("gulp");
 
-const allExtensionTypes = [
-    "components",
-    "libraries",
-    "plugins"
-];
+// const allExtensionTypes = ["components", "libraries", "plugins"];
+const allExtensionTypes = ["modules"];
 const extensionTypes = [];
 
 allExtensionTypes.forEach(function (type) {
-    "use strict";
     if (fs.existsSync("./extensions/" + type)) {
         require("./gulp/" + type + ".js");
         extensionTypes.push(type);
@@ -22,23 +18,20 @@ allExtensionTypes.forEach(function (type) {
 const mainTasks = gulpUtils.getBaseTasks();
 
 // Configuration read task.  Stores it in gulpUtils.config variable
-gulp.task("config", function (done) {
-    "use strict";
+const config = function (done) {
     gulpUtils.setConfigurationFromData(utils.readJSON("gulp-config.json"));
     gulpUtils.setConfigurationFromData(yargs.argv);
     done();
-});
+};
 
 extensionTypes.forEach(function (type) {
-    "use strict";
-    mainTasks.release.push("release:" + type);
-    mainTasks.clean.push("clean:" + type);
-    mainTasks.copy.push("copy:" + type);
-    mainTasks.watch.push("watch:" + type);
+    Object.keys(mainTasks).forEach((task) => {
+        mainTasks[task].push(task + ":" + type);
+    });
 });
 
-gulp.task("release", gulp.series("config", gulp.parallel(mainTasks.release)));
-gulp.task("clean", gulp.series("config", gulp.parallel(mainTasks.clean)));
-gulp.task("copy", gulp.series("config", gulp.parallel(mainTasks.copy)));
-gulp.task("watch", gulp.series("config", gulp.parallel(mainTasks.watch)));
-gulp.task("default", gulp.parallel(gulpUtils.config.defaultTasks));
+exports.release = series(config, parallel(mainTasks.release));
+exports.clean = series(config, parallel(mainTasks.clean));
+exports.copy = series(config, parallel(mainTasks.copy));
+exports.watch = series(config, parallel(mainTasks.watch));
+exports.default = parallel(exports[gulpUtils.config.defaultTasks]);

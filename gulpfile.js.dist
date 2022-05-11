@@ -1,1 +1,5 @@
 const joomlaBuild = require("joomla-build");
+
+Object.keys(joomlaBuild).forEach((task) => {
+  exports[task] = joomlaBuild[task];
+});

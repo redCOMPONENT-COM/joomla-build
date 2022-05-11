@@ -8,7 +8,6 @@ const libraryDirs = utils.getFilesByType(mainDir, "directory");
 const libraryTasks = gulpUtils.generateDirTasks(mainDir, mainBaseTask);
 
 libraryDirs.forEach(function (dir) {
-    "use strict";
     const libraryDir = mainDir + "/" + dir;
     const libraryBaseTask = mainBaseTask + ":" + dir;
     gulpUtils.generateContentTasks(

@@ -8,13 +8,10 @@ const componentDirs = utils.getFilesByType(mainDir, "directory");
 const componentTasks = gulpUtils.generateDirTasks(mainDir, mainBaseTask);
 
 componentDirs.forEach(function (component) {
-    "use strict";
     const componentDir = mainDir + "/" + component;
     const componentBaseTask = mainBaseTask + ":" + component;
     const componentExtensionName =
-            component.substr(0, 4) === prefix
-        ? component.substr(4)
-        : component;
+        component.substr(0, 4) === prefix ? component.substr(4) : component;
 
     // Release tasks
     gulpUtils.generateContentTasks(
@@ -33,20 +30,22 @@ componentDirs.forEach(function (component) {
     });
 
     // Copy tasks (inherits to admin/site directories).  Reserved directory names: "admin" for backend, and any other for the frontend
-    const componentDirTasks = gulpUtils.generateDirTasks(componentDir, componentBaseTask);
+    const componentDirTasks = gulpUtils.generateDirTasks(
+        componentDir,
+        componentBaseTask
+    );
     componentDirTasks.directories.forEach(function (componentSite) {
-        const componentSiteDir = mainDir + "/" + component + "/" + componentSite.directory;
-        const componentSiteBaseTask = mainBaseTask + ":" + component + ":" + componentSite.directory;
-        const componentSiteWebDir = (componentSite.directory === "admin")
-            ? "administrator/components/" + prefix + component
-            : "components/" + prefix + component;
+        const componentSiteDir =
+            mainDir + "/" + component + "/" + componentSite.directory;
+        const componentSiteBaseTask =
+            mainBaseTask + ":" + component + ":" + componentSite.directory;
+        const componentSiteWebDir =
+            componentSite.directory === "admin"
+                ? "administrator/components/" + prefix + component
+                : "components/" + prefix + component;
         gulpUtils.generateContentTasks(
             componentSiteDir,
-            (
-                componentSite.directory === "admin"
-                    ? componentStandaloneFiles
-                    : []
-            ),
+            componentSite.directory === "admin" ? componentStandaloneFiles : [],
             componentExtensionName,
             componentSiteBaseTask,
             componentSiteWebDir,
@@ -54,6 +53,10 @@ componentDirs.forEach(function (component) {
             ""
         );
     });
-    gulpUtils.createGulpTasks(componentBaseTask, componentDirTasks.tasks, gulpUtils.getBaseWebTasks());
+    gulpUtils.createGulpTasks(
+        componentBaseTask,
+        componentDirTasks.tasks,
+        gulpUtils.getBaseWebTasks()
+    );
 });
 gulpUtils.createGulpTasks(mainBaseTask, componentTasks.tasks, false);
