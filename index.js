@@ -2,10 +2,11 @@ const gulpUtils = require("./gulp/gulp-utils.js");
 const utils = require("./gulp/utils.js");
 const yargs = require("yargs");
 const fs = require("fs");
-const { task, series, parallel } = require("gulp");
+const { series, parallel } = require("gulp");
 const gulp = require("gulp");
 
-const allExtensionTypes = ["components", "libraries", "plugins"];
+// const allExtensionTypes = ["components", "libraries", "plugins"];
+const allExtensionTypes = ["modules"];
 const extensionTypes = [];
 
 allExtensionTypes.forEach(function (type) {
@@ -25,10 +26,9 @@ const config = function (done) {
 };
 
 extensionTypes.forEach(function (type) {
-    mainTasks.release.push("release:" + type);
-    mainTasks.clean.push("clean:" + type);
-    mainTasks.copy.push("copy:" + type);
-    mainTasks.watch.push("watch:" + type);
+    Object.keys(mainTasks).forEach((task) => {
+        mainTasks[task].push(task + ":" + type);
+    });
 });
 
 exports.release = series(config, parallel(mainTasks.release));

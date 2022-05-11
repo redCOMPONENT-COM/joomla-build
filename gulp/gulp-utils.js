@@ -1,10 +1,10 @@
 const utils = require("./utils.js");
-const gulp = require("gulp");
 const zip = require("gulp-zip");
 const vinylPaths = require("vinyl-paths");
 const del = require("del");
 const composer = require("gulp-composer");
 const fs = require("fs");
+const { task, series, parallel, watch, dest, src } = require("gulp");
 
 /**
  * Main configuration
@@ -119,16 +119,16 @@ function generateTaskSet(
  */
 function createGulpTasks(baseTask, dependencies, tasks) {
     if (tasks === false || tasks.hasOwnProperty("release")) {
-        gulp.task("release:" + baseTask, gulp.parallel(dependencies.release));
+        task("release:" + baseTask, parallel(dependencies.release));
     }
     if (tasks === false || tasks.hasOwnProperty("clean")) {
-        gulp.task("clean:" + baseTask, gulp.parallel(dependencies.clean));
+        task("clean:" + baseTask, parallel(dependencies.clean));
     }
     if (tasks === false || tasks.hasOwnProperty("copy")) {
-        gulp.task("copy:" + baseTask, gulp.parallel(dependencies.copy));
+        task("copy:" + baseTask, parallel(dependencies.copy));
     }
     if (tasks === false || tasks.hasOwnProperty("watch")) {
-        gulp.task("watch:" + baseTask, gulp.parallel(dependencies.watch));
+        task("watch:" + baseTask, parallel(dependencies.watch));
     }
 }
 
@@ -194,7 +194,7 @@ function generateContentTasks(
     const sources = [dir + "/**"].concat(extraSources);
 
     if (composerExists) {
-        gulp.task("composer:" + baseTask, function () {
+        task("composer:" + baseTask, function () {
             return composer({ "working-dir": dir });
         });
         releaseTasks.unshift("composer:" + baseTask);
@@ -213,68 +213,63 @@ function generateContentTasks(
                     : "";
             const versionName =
                 versionNumber !== "" ? "-v" + versionNumber : "";
-            return gulp
-                .src(sources)
+            return src(sources)
                 .pipe(zip(zipName + versionName + ".zip"))
-                .pipe(
-                    gulp.dest(config.releaseDir + "/" + destinationReleaseDir)
-                );
+                .pipe(dest(config.releaseDir + "/" + destinationReleaseDir));
         };
         if (composerExists) {
-            gulp.task("release-do:" + baseTask, releaseFunction);
-            gulp.task("release:" + baseTask, gulp.parallel(releaseTasks));
+            task("release-do:" + baseTask, releaseFunction);
+            task("release:" + baseTask, parallel(releaseTasks));
         } else {
-            gulp.task("release:" + baseTask, releaseFunction);
+            task("release:" + baseTask, releaseFunction);
         }
     }
 
     if (executeWebTasks) {
         // Clean task
-        gulp.task("clean:" + baseTask, function () {
-            return gulp
-                .src(config.wwwDir + "/" + destinationWebDir, {
-                    allowEmpty: true,
+        task("clean:" + baseTask, function () {
+            return src(config.wwwDir + "/" + destinationWebDir, {
+                allowEmpty: true,
+            }).pipe(
+                vinylPaths(function (paths) {
+                    del.sync(paths, { force: true });
+                    return Promise.resolve();
                 })
-                .pipe(
-                    vinylPaths(function (paths) {
-                        del.sync(paths, { force: true });
-                        return Promise.resolve();
-                    })
-                );
+            );
         });
 
         // Copy tasks
-        gulp.task(
+        task(
             "copy-do:" + baseTask,
-            gulp.series("clean:" + baseTask, function () {
-                return gulp
-                    .src(sources)
-                    .pipe(gulp.dest(config.wwwDir + "/" + destinationWebDir));
+            series("clean:" + baseTask, function () {
+                return src(sources).pipe(
+                    dest(config.wwwDir + "/" + destinationWebDir)
+                );
             })
         );
-        gulp.task("copy:" + baseTask, gulp.series(copyTasks));
+        task("copy:" + baseTask, series(copyTasks));
 
         // Watch tasks
         const watchFunction = function () {
-            return gulp.watch(
+            return watch(
                 sources,
                 { interval: config.watchInterval },
-                gulp.series("copy-do:" + baseTask)
+                series("copy-do:" + baseTask)
             );
         };
 
         if (composerExists) {
-            gulp.task("watch-composer:" + baseTask, function () {
-                return gulp.watch(
+            task("watch-composer:" + baseTask, function () {
+                return watch(
                     [dir + "/composer.json", dir + "/composer.lock"],
                     { interval: config.watchInterval },
-                    gulp.series("composer:" + baseTask)
+                    series("composer:" + baseTask)
                 );
             });
-            gulp.task("watch-main:" + baseTask, watchFunction);
-            gulp.task("watch:" + baseTask, gulp.parallel(watchTasks));
+            task("watch-main:" + baseTask, watchFunction);
+            task("watch:" + baseTask, parallel(watchTasks));
         } else {
-            gulp.task("watch:" + baseTask, watchFunction);
+            task("watch:" + baseTask, watchFunction);
         }
     }
 
