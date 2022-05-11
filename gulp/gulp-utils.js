@@ -12,11 +12,11 @@ const fs = require("fs");
  * @type {{defaultTasks: string[], releaseDir: string, wwwDir: string, watchInterval: number, useVersions: boolean}}
  */
 const config = {
-    "defaultTasks": ["release"],
-    "releaseDir": "./releases",
-    "wwwDir": "/.tmp/www",
-    "watchInterval": 500,
-    "useVersions": true
+    defaultTasks: ["release"],
+    releaseDir: "./releases",
+    wwwDir: "/.tmp/www",
+    watchInterval: 500,
+    useVersions: true,
 };
 
 /**
@@ -25,10 +25,10 @@ const config = {
  * @type {{release: Array, clean: Array, copy: Array, watch: Array}}
  */
 const baseDirSt = {
-    "release": [],
-    "clean": [],
-    "copy": [],
-    "watch": []
+    release: [],
+    clean: [],
+    copy: [],
+    watch: [],
 };
 
 /**
@@ -37,7 +37,6 @@ const baseDirSt = {
  * @param data
  */
 function setConfigurationFromData(data) {
-    "use strict";
     if (data.hasOwnProperty("defaultTasks")) {
         config.defaultTasks = data.defaultTasks;
     }
@@ -61,7 +60,6 @@ function setConfigurationFromData(data) {
  * @returns {Object}
  */
 function getBaseTasks() {
-    "use strict";
     return utils.cloneObject(baseDirSt);
 }
 
@@ -71,7 +69,6 @@ function getBaseTasks() {
  * @returns {Object}
  */
 function getBaseWebTasks() {
-    "use strict";
     const webTasks = utils.cloneObject(baseDirSt);
     delete webTasks.release;
     return webTasks;
@@ -87,16 +84,14 @@ function getBaseWebTasks() {
  *
  * @returns {Array}
  */
-function generateTaskSet(baseTask, taskSet, generateReleaseTasks, generateWebTasks) {
-    "use strict";
-    const tasks =
-            (taskSet === null
-        ? getBaseTasks()
-        : null);
-    let destination =
-            (taskSet === null
-        ? tasks
-        : taskSet);
+function generateTaskSet(
+    baseTask,
+    taskSet,
+    generateReleaseTasks,
+    generateWebTasks
+) {
+    const tasks = taskSet === null ? getBaseTasks() : null;
+    let destination = taskSet === null ? tasks : taskSet;
 
     if (generateReleaseTasks) {
         destination.release.push("release:" + baseTask);
@@ -123,7 +118,6 @@ function generateTaskSet(baseTask, taskSet, generateReleaseTasks, generateWebTas
  * @param {Object|boolean}  tasks         Object with tasks to generate.  If false it generates the default set
  */
 function createGulpTasks(baseTask, dependencies, tasks) {
-    "use strict";
     if (tasks === false || tasks.hasOwnProperty("release")) {
         gulp.task("release:" + baseTask, gulp.parallel(dependencies.release));
     }
@@ -147,15 +141,19 @@ function createGulpTasks(baseTask, dependencies, tasks) {
  * @returns {Object}  Collection of tasks and collection of directories, each with its own tasks
  */
 function generateDirTasks(mainDir, baseTask) {
-    "use strict";
     const mainTasks = getBaseTasks();
     const directories = [];
     utils.getFilesByType(mainDir, "directory").forEach(function (dir) {
-        const dirTasks = generateTaskSet(baseTask + ":" + dir, null, true, true);
+        const dirTasks = generateTaskSet(
+            baseTask + ":" + dir,
+            null,
+            true,
+            true
+        );
         generateTaskSet(baseTask + ":" + dir, mainTasks, true, true);
-        directories.push({"directory": dir, tasks: dirTasks});
+        directories.push({ directory: dir, tasks: dirTasks });
     });
-    return {"tasks": mainTasks, "directories": directories};
+    return { tasks: mainTasks, directories: directories };
 }
 
 /**
@@ -171,8 +169,15 @@ function generateDirTasks(mainDir, baseTask) {
  *
  * @returns {Object}  Generated tasks dependent of the main task
  */
-function generateContentTasks(dir, extraSources, extensionName, baseTask, destinationWebDir, destinationReleaseDir, zipName) {
-    "use strict";
+function generateContentTasks(
+    dir,
+    extraSources,
+    extensionName,
+    baseTask,
+    destinationWebDir,
+    destinationReleaseDir,
+    zipName
+) {
     // Checks which tasks must be generated.  If dirs are omitted, tasks are too
     const executeWebTasks = destinationWebDir !== "";
     const executeReleaseTasks = destinationReleaseDir !== "";
@@ -190,7 +195,7 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
 
     if (composerExists) {
         gulp.task("composer:" + baseTask, function () {
-            return composer({"working-dir": dir});
+            return composer({ "working-dir": dir });
         });
         releaseTasks.unshift("composer:" + baseTask);
         copyTasks.unshift("composer:" + baseTask);
@@ -201,18 +206,19 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
         // Release tasks
         const releaseFunction = function () {
             const versionNumber =
-                    config.useVersions === true
-                ? utils.getManifestVersion(dir + "/" + extensionName + ".xml")
-                : "";
-            const versionName = (
-                versionNumber !== ""
-                    ? "-v" + versionNumber
-                    : ""
-            );
-            return gulp.src(sources)
+                config.useVersions === true
+                    ? utils.getManifestVersion(
+                          dir + "/" + extensionName + ".xml"
+                      )
+                    : "";
+            const versionName =
+                versionNumber !== "" ? "-v" + versionNumber : "";
+            return gulp
+                .src(sources)
                 .pipe(zip(zipName + versionName + ".zip"))
-                .pipe(gulp.dest(config.releaseDir + "/" + destinationReleaseDir));
-
+                .pipe(
+                    gulp.dest(config.releaseDir + "/" + destinationReleaseDir)
+                );
         };
         if (composerExists) {
             gulp.task("release-do:" + baseTask, releaseFunction);
@@ -225,32 +231,43 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
     if (executeWebTasks) {
         // Clean task
         gulp.task("clean:" + baseTask, function () {
-            return gulp.src(config.wwwDir + "/" + destinationWebDir, {"allowEmpty": true})
-                .pipe(vinylPaths(function (paths) {
-                    del.sync(paths, {"force": true});
-                    return Promise.resolve();
-                }));
+            return gulp
+                .src(config.wwwDir + "/" + destinationWebDir, {
+                    allowEmpty: true,
+                })
+                .pipe(
+                    vinylPaths(function (paths) {
+                        del.sync(paths, { force: true });
+                        return Promise.resolve();
+                    })
+                );
         });
 
         // Copy tasks
-        gulp.task("copy-do:" + baseTask, gulp.series("clean:" + baseTask, function () {
-            return gulp.src(sources)
-                .pipe(gulp.dest(config.wwwDir + "/" + destinationWebDir));
-        }));
+        gulp.task(
+            "copy-do:" + baseTask,
+            gulp.series("clean:" + baseTask, function () {
+                return gulp
+                    .src(sources)
+                    .pipe(gulp.dest(config.wwwDir + "/" + destinationWebDir));
+            })
+        );
         gulp.task("copy:" + baseTask, gulp.series(copyTasks));
 
         // Watch tasks
         const watchFunction = function () {
-            return gulp.watch(sources,
-                    {interval: config.watchInterval},
-                    gulp.series("copy-do:" + baseTask));
+            return gulp.watch(
+                sources,
+                { interval: config.watchInterval },
+                gulp.series("copy-do:" + baseTask)
+            );
         };
 
         if (composerExists) {
             gulp.task("watch-composer:" + baseTask, function () {
                 return gulp.watch(
                     [dir + "/composer.json", dir + "/composer.lock"],
-                    {interval: config.watchInterval},
+                    { interval: config.watchInterval },
                     gulp.series("composer:" + baseTask)
                 );
             });
@@ -261,7 +278,12 @@ function generateContentTasks(dir, extraSources, extensionName, baseTask, destin
         }
     }
 
-    return generateTaskSet(baseTask, null, executeReleaseTasks, executeWebTasks);
+    return generateTaskSet(
+        baseTask,
+        null,
+        executeReleaseTasks,
+        executeWebTasks
+    );
 }
 
 exports.config = config;

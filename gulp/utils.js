@@ -10,7 +10,6 @@ const xmlParser = new xml2js.Parser();
  * @returns {string}  Empty json object if file does not exist
  */
 function readJSON(jsonFile) {
-    "use strict";
     if (!fs.existsSync(jsonFile)) {
         return "{}";
     }
@@ -25,7 +24,6 @@ function readJSON(jsonFile) {
  * @returns object
  */
 function cloneObject(object) {
-    "use strict";
     return JSON.parse(JSON.stringify(object));
 }
 
@@ -38,12 +36,14 @@ function cloneObject(object) {
  * @returns {Array}
  */
 function getFilesbyType(dir, type) {
-    "use strict";
     const files = fs.readdirSync(dir);
     const dirs = [];
     files.forEach(function (file) {
         const isDirectory = fs.statSync(dir + "/" + file).isDirectory();
-        if ((type === "directory" && isDirectory) || (type !== "directory" && !isDirectory)) {
+        if (
+            (type === "directory" && isDirectory) ||
+            (type !== "directory" && !isDirectory)
+        ) {
             dirs.push(file);
         }
     });
@@ -58,7 +58,6 @@ function getFilesbyType(dir, type) {
  * @returns {string}
  */
 function getManifestVersion(xmlFile) {
-    "use strict";
     let version = "";
     xmlParser.parseString(fs.readFileSync(xmlFile), function (err, data) {
         if (err) {
@@ -69,7 +68,6 @@ function getManifestVersion(xmlFile) {
     });
     return version;
 }
-
 
 exports.readJSON = readJSON;
 exports.cloneObject = cloneObject;

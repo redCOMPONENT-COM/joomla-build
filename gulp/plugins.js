@@ -6,13 +6,17 @@ const mainBaseTask = "plugins";
 const pluginDirTasks = gulpUtils.generateDirTasks(mainDir, mainBaseTask);
 
 pluginDirTasks.directories.forEach(function (pluginType) {
-    "use strict";
     const pluginTypeDir = mainDir + "/" + pluginType.directory;
     const pluginTypeBaseTask = mainBaseTask + ":" + pluginType.directory;
-    const pluginTypeTasks = gulpUtils.generateDirTasks(pluginTypeDir, pluginTypeBaseTask);
+    const pluginTypeTasks = gulpUtils.generateDirTasks(
+        pluginTypeDir,
+        pluginTypeBaseTask
+    );
     pluginTypeTasks.directories.forEach(function (plugin) {
-        const pluginDir = mainDir + "/" + pluginType.directory + "/" + plugin.directory;
-        const pluginBaseTask = mainBaseTask + ":" + pluginType.directory + ":" + plugin.directory;
+        const pluginDir =
+            mainDir + "/" + pluginType.directory + "/" + plugin.directory;
+        const pluginBaseTask =
+            mainBaseTask + ":" + pluginType.directory + ":" + plugin.directory;
         gulpUtils.generateContentTasks(
             pluginDir,
             [],
